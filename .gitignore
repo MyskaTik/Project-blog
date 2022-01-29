@@ -1,0 +1,36 @@
+*.dll
+*.exe
+*.pdb
+*.cache
+*.html
+*.jpg
+*.map
+*.png
+*.pdb
+*.css
+*.js
+*.json
+*.targets
+obj/Release/net5.0/staticwebassets/Backend.StaticWebAssets.xml
+obj/Debug/net5.0/Backend.AssemblyInfo.cs
+obj/Debug/net5.0/Backend.csproj.CopyComplete
+obj/Debug/net5.0/.NETCoreApp,Version=v5.0.AssemblyAttributes.cs
+*.editorconfig
+obj/Debug/net5.0/PublishOutputs.7860069729.txt
+<<<<<<< HEAD
+*.csproj
+*.user
+Data_Blog_EF/.vs/Data_Blog_EF/v15/.ssms_suo
+*.CopyComplete
+obj/Debug/net6.0/Backend_EF.AssemblyInfo.cs
+obj/Debug/net6.0/Backend_EF.GlobalUsings.g.cs
+obj/Debug/net6.0/Backend_EF.RazorAssemblyInfo.cs
+obj/Debug/net6.0/Backend_EF.RazorAssemblyInfo.cs
+obj/staticwebassets.pack.sentinel
+*.bak
+*.css
+*.js
+=======
+*.png
+*.jpg
+>>>>>>> parent of fd79a31 (Layout`s files was added)

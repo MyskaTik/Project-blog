@@ -1,0 +1,28 @@
+﻿@model Backend.ViewModels.MessageModel
+@{
+    Layout = null;
+}
+<h2>Get message</h2>
+<form asp-controller="Admin" asp-action="Messages">
+    <input type="text" asp-for="Name" placeholder="Enter Name" /><br />
+    <input type="text" asp-for="Email" placeholder="Enter Email" /><br />
+    <input type="submit" name="name" value="get" />
+</form>
+<h2>Get info about user</h2>
+<form asp-controller="Admin" asp-action="AllUsers">
+    <input type="text" asp-for="Name" autocomplete="on" value="" />
+    <input type="submit" name="name" value="get" />
+</form>
+<h2>Delete message</h2>
+<form asp-controller="Admin" asp-action="DeleteMessage">
+    <input type="text" asp-for="Name" autocomplete="on" placeholder="Enter Name" /><br />
+    <input type="text" asp-for="Email" autocomplete="on" placeholder="Enter Email" /><br />
+    <input type="submit" name="name" value="delete" />
+</form>
+<h2>Send message from admin</h2>
+<form asp-controller="Admin" asp-action="SendMessageFromAdmin">
+    <input type="text" asp-for="Name" autocomplete="on" placeholder="Enter Name" /><br />
+    <input type="text" asp-for="Email" autocomplete="on" placeholder="Enter Email" /><br />
+    <input type="text" asp-for="Message" autocomplete="on" placeholder="Enter Message" /><br />
+    <input type="submit" name="name" value="send" />
+</form>

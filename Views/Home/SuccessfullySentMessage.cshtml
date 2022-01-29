@@ -1,0 +1,49 @@
+﻿@model Backend_EF.ViewModels.MessageModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html style="font-size: 16px;">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Myskat developer">
+    <meta name="description" content="">
+    <meta name="page_type" content="np-template-header-footer-from-plugin">
+    <title>SendEmail</title>
+    <link rel="stylesheet" href="~/nicepage.css" media="screen">
+    <link rel="stylesheet" href="~/SendEmail.css" media="screen">
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 4.0.3, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i">
+
+    <meta name="theme-color" content="#478ac9">
+    <meta property="og:title" content="SendEmail">
+    <meta property="og:type" content="website">
+</head>
+<body class="u-body">
+    <header class="u-clearfix u-header u-header" id="sec-f75d">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <img class="u-image u-image-circle u-image-1" src="images/003cc9e343b54ece72a78a8eb21a016f2594bc53f9fb0d009f3eeee122913bff12a3c35e89a2b5858a98eac2fa0d76ef1d7790f39174fdbcc30182_1280.png" alt="" data-image-width="1280" data-image-height="1248" data-href="Profile.html" data-page-id="158302609">
+            <h2 class="u-text u-text-1">Maxim developer</h2>
+        </div>
+    </header>
+    <section class="u-align-center u-clearfix u-image u-shading u-section-1" src="" data-image-width="1280" data-image-height="800" id="sec-1ac4">
+        <div class="u-align-center u-clearfix u-sheet u-sheet-1">
+            <h2 class="u-text u-text-default u-text-1">@Model?.Message</h2>
+            <a asp-controller="Home" asp-action="Index" class="u-btn u-button-style u-btn-1">Go back</a>
+        </div>
+    </section>
+
+
+    <footer class="u-clearfix u-footer u-grey-80" id="sec-2b40">
+        <div class="u-align-left u-clearfix u-sheet u-valign-middle u-sheet-1">
+            <p class="u-text u-text-default u-text-1">Copyright Myskat</p>
+            <p class="u-text u-text-default u-text-2">
+                2021<span style="font-weight: 700;"></span>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
