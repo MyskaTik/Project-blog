@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Mail;
-using System.Net;
 using Backend_EF.ViewModels;
 
 namespace Backend_EF.Controllers
@@ -77,13 +75,6 @@ namespace Backend_EF.Controllers
 
         [HttpPost]
         public string Send([Bind] User user, MessageModel messageModel) => db.SendMessage(user, messageModel);
-
-        [HttpPost]
-        public IActionResult GetMessageFromAdmin([Bind] User user, MessageModel messageModel)
-        {
-            db.GetMessageFromAdmin(user, messageModel);
-            return RedirectToAction("SuccessfullyGot");
-        }
 
         [HttpPost]
         public IActionResult SuccessfullyGotMessage([Bind] User user, MessageModel messageModel)
