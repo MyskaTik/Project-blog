@@ -26,19 +26,5 @@ namespace Backend_EF.Controllers
             user.ScoreModel.Score = db.GetScore(user.ScoreModel, user);
             return View(user);
         }
-        public IActionResult Easy() => View();
-        public IActionResult Normal() => View();
-        public IActionResult Hard() => View();
-
-        [HttpPost]
-        public async Task<IActionResult> CheckAnswer(AnswerModel answerModel)
-        {
-            //answerModel.IsTrueAnswer = db.GetTrueAnswer(answerModel.Answer);
-            //if (answerModel.IsTrueAnswer)
-            //    return Content("true");
-            //else 
-            //    return Content("false");
-            return Content("Hello");
-        }
     }
 }
