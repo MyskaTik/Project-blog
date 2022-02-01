@@ -14,31 +14,20 @@ namespace Backend_EF.Controllers
         //HttpGet
 
         [HttpGet]
-        public IActionResult HomePage(MessageModel messageModel)
+        public IActionResult HomePage(User user)
         {
-            //sets message`s data
-            messageModel.Name = HttpContext.Session.GetString("userName");
-            messageModel.Email = HttpContext.Session.GetString("userEmail");
-            messageModel.Password = HttpContext.Session.GetString("userPassword");
-            messageModel.IdCode = db.GetIdCode(messageModel.Name, messageModel.Email, messageModel.Password);
             //sets user`s data
-            User user = new()
+            user.Name = HttpContext.Session.GetString("userName");
+            user.Email = HttpContext.Session.GetString("userEmail");
+            user.Password = HttpContext.Session.GetString("userPassword");
+            user.IdCode = db.GetIdCode(user.Name, user.Email, user.Password);
+            user.ScoreModel = new ScoreModel()
             {
-                Name = HttpContext.Session.GetString("userName"),
-                Email = HttpContext.Session.GetString("userEmail"),
-                Password = HttpContext.Session.GetString("userPassword")
+                Name = user.Name
             };
-            //sets score for pass in view
-            messageModel.ScoreModel = new ScoreModel()
-            {
-                Name = messageModel.Name
-            };
-            messageModel.ScoreModel.Score = db.GetScore(messageModel.ScoreModel, user);
-            return View(messageModel);
+            user.ScoreModel.Score = db.GetScore(user.ScoreModel, user);
+            return View(user);
         }
-
-        [HttpGet]
-        public IActionResult Chat() => View();
 
         [HttpGet]
         public IActionResult Error() => View();

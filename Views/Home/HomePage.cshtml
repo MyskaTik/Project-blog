@@ -1,4 +1,4 @@
-﻿@model Backend_EF.ViewModels.MessageModel
+﻿@model Backend_EF.ViewModels.User
 @{
     Layout = null;
 }
@@ -157,15 +157,15 @@
                                                 <input type="hidden" id="pageId" name="pageId" value="1766819294">
                                                 <div class="u-form-group u-form-message">
                                                     <label for="username-708d" class="u-form-control-hidden u-label"></label>
-                                                    <input type="text" placeholder="Enter your Username" id="username-708d" asp-for="Name" value="@Model?.Name" class="u-grey-5 u-input u-input-rectangle" required="">
+                                                    <input type="text" placeholder="Enter your Username" id="username-708d" asp-for="MessageModel.Name" value="@Model?.Name" class="u-grey-5 u-input u-input-rectangle" required="">
                                                 </div>
                                                 <div class="u-form-group u-form-message">
                                                     <label for="username-708d" class="u-form-control-hidden u-label"></label>
-                                                    <input type="email" placeholder="Enter your Email" id="username-708d" asp-for="Email" value="@Model?.Email" class="u-grey-5 u-input u-input-rectangle" required="">
+                                                    <input type="email" placeholder="Enter your Email" id="username-708d" asp-for="MessageModel.Email" value="@Model?.Email" class="u-grey-5 u-input u-input-rectangle" required="">
                                                 </div>
                                                 <div class="u-form-group u-form-message">
                                                     <label for="message-d1e0" class="u-form-control-hidden u-label"></label>
-                                                    <textarea type="text" placeholder="Enter your message" rows="4" cols="50" id="message-d1e0" asp-for="Message" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required=""></textarea>
+                                                    <textarea type="text" placeholder="Enter your message" rows="4" cols="50" id="message-d1e0" asp-for="MessageModel.Message" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required=""></textarea>
                                                 </div>
                                                 <div class="u-align-center u-form-group u-form-submit">
                                                     <a class="u-btn u-btn-submit u-button-style">Send</a>

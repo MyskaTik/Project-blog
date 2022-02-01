@@ -15,8 +15,9 @@ namespace Backend_EF.ViewModels
         private const string ADMINNAME = "Admin";
         private const string ALPHABET = "abdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         public string QueryConnectionPublic { get; set; } = "Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Users;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False";
-        public DbSet<User>? Usersdata { get; set; }
-        public DbSet<ScoreModel>? Scoredata { get; set; }
+        public DbSet<User> Usersdata { get; set; }
+        public DbSet<MessageModel> Messagedata { get; set; }
+        public DbSet<ScoreModel> Scoredata { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
             Database.EnsureCreated();
@@ -167,32 +168,13 @@ namespace Backend_EF.ViewModels
         public string SendMessage([Bind] User user, MessageModel messageModel)
         {
             //sending message from user name
-            string queryString = $"INSERT INTO Messagedata(Name, Email, Message, ToEmail) VALUES('{messageModel.Name}','{messageModel.Email}','{messageModel.Message}', '{ADMINEMAIL}')";
-            SqlConnection connection = new(QUERYCONNECTION);
-            SqlCommand command = new(queryString, connection);
-            try
-            {
-                if (!IsExistWithoutPassword(user))
-                    return "Name or email is wrong";
-                if (ManyMessagesToOne(messageModel, QUERYCONNECTION))
-                    return "You have already sent message. Please wait while admin will read your message and answer you. Sincerely, administration";
-
-                connection.Open();
-                command.ExecuteNonQuery();
-                connection.Close();
-                return "Message was sent succesfully";
-            }
-            catch (Exception ex)
-            {
-                if (connection.State == ConnectionState.Open)
-                    connection.Close();
-                return ex.Message.ToString();
-            }
-            finally
-            {
-                connection.Close();
-            }
-
+            if (!IsExistWithoutPassword(user))
+                return "Name or email is wrong";
+            if (ManyMessagesToOne(messageModel, QUERYCONNECTION))
+                return "You have already sent message. Please wait while admin will read your message and answer you. Sincerely, administration";
+            Messagedata.Add(messageModel);
+            SaveChanges();
+            return "Message was sent succesfully";
         }//verified
         public string SendMessageFromAdmin([Bind] User user, MessageModel messageModel)
         {
@@ -223,7 +205,7 @@ namespace Backend_EF.ViewModels
                 connection.Close();
             }
 
-        }//verified
+        }//verified admin api
         public string GetMessageFromAdmin([Bind] User user, MessageModel messageModel)
         {
             //gets message only if it from administration. this method using for getting message to user
@@ -295,7 +277,7 @@ namespace Backend_EF.ViewModels
             {
                 connection.Close();
             }
-        }//verified
+        }//verified admin api
         public string GetUser([Bind] User user)
         {
             //gets all info about specific user
@@ -324,7 +306,7 @@ namespace Backend_EF.ViewModels
             else
                 return "user isn`t exist";
 
-        }//verified
+        }//verified admin api
         public string DeleteMessage([Bind] User user, string connectionString)
         {
             //delete message from somebody in the db if it necessary
@@ -343,7 +325,7 @@ namespace Backend_EF.ViewModels
             }
             else
                 return false.ToString();
-        }//verified
+        }//verified admin api
         public async void SendMail([Bind] MessageModel messageModel)
         {
             string password = GetPassword(messageModel.Name);

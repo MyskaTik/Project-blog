@@ -11,7 +11,7 @@ namespace Backend_EF.ViewModels
         public string? IdCode { get; set; } = string.Empty;
         public int RoleID { get; set; } = 3;
         public string? RoleName { get; set; } = "user";//default
+        public MessageModel? MessageModel { get; set; }
         public ScoreModel? ScoreModel { get; set; }
-        public AnswerModel? AnswerModel { get; set; }
     }
 }
