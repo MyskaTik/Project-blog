@@ -14,10 +14,9 @@ namespace Backend_EF.ViewModels
         private const string ADMINEMAIL = "maximkirichenk0.06@gmail.com";
         private const string ADMINNAME = "Admin";
         private const string ALPHABET = "abdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        public string QueryConnectionPublic { get; set; } = "Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Users;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False";
         public DbSet<User> Usersdata { get; set; }
         public DbSet<MessageModel> Messagedata { get; set; }
-        public DbSet<ScoreModel> Scoredata { get; set; }
+        public DbSet<NoteModel> Notes { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
             Database.EnsureCreated();
@@ -35,13 +34,7 @@ namespace Backend_EF.ViewModels
             if (IsExist(receivedUser))//if user isn`t exist
                 return false;
             receivedUser.IdCode = GenerateIdCode(ALPHABET, 20);
-            ScoreModel scoreUser = new()
-            {
-                Name = receivedUser.Name,
-                Score = 0
-            };
             Usersdata?.Add(receivedUser);
-            Scoredata?.Add(scoreUser);
             SaveChanges();
             return true;
         }//verified
@@ -96,6 +89,7 @@ namespace Backend_EF.ViewModels
         public string GetPassword(string IdCode)
         {
             //returns password by specified user`s IdCode
+            string result = string.Empty;
             string queryString = $"SELECT Password FROM Usersdata WHERE IdCode LIKE '{IdCode}'";
             SqlConnection connection = new(QUERYCONNECTION);
             SqlCommand command = new(queryString, connection);
@@ -103,23 +97,32 @@ namespace Backend_EF.ViewModels
             command.ExecuteNonQuery();
             SqlDataReader reader = command.ExecuteReader();
             if (reader.Read())
-                return reader.GetString(0);
+            {
+                result = reader.GetString(0);
+                
+            }
             else
-                return "password not found";
+                result = "password not found";
+            reader.Close();
+            return result;
         }//verified
-        public string GetIdCode(string name, string email, string password)
+        public string GetIdCode(User user)
         {
             //returns IdCode of specified user using model MessageModel, because that model is used in view
-            string queryString = $"SELECT IdCode FROM Usersdata WHERE Name LIKE '{name}' AND Email LIKE '{email}' AND Password LIKE '{password}'";
+            string result = string.Empty;
+            string queryString = $"SELECT IdCode FROM Usersdata WHERE Name LIKE '{user.Name}' AND Email LIKE '{user.Email}' AND Password LIKE '{user.Password}'";
             SqlConnection connection = new(QUERYCONNECTION);
             SqlCommand command = new(queryString, connection);
             connection.Open();
             command.ExecuteNonQuery();
             SqlDataReader reader = command.ExecuteReader();
             if (reader.Read())
-                return reader.GetString(0);
+                result = reader.GetString(0);
             else
-                return "IdCode not found";
+                result = "IdCode not found";
+
+            reader.Close();
+            return result;
         }//verified
         private void SetRole(string connectionString)
         {
@@ -146,6 +149,7 @@ namespace Backend_EF.ViewModels
                 result += reader.GetString(1);
             }
             connection.Close();
+            reader.Close();
             return result;
         }//verified
         private string GenerateIdCode(string Alphabet, int Length)
@@ -288,7 +292,7 @@ namespace Backend_EF.ViewModels
                 "Password",
                 "RoleName"
             };
-            string result = "";
+            string result = string.Empty;
             string queryString = $"SELECT Name, Email, Password, RoleName FROM Usersdata WHERE Name LIKE '{user.Name}'";
             SqlConnection connection = new(QUERYCONNECTION);
             SqlCommand command = new(queryString, connection);
@@ -304,7 +308,10 @@ namespace Backend_EF.ViewModels
                 return result;
             }
             else
-                return "user isn`t exist";
+                result = "user isn`t exist";
+
+            reader.Close();
+            return result;
 
         }//verified admin api
         public string DeleteMessage([Bind] User user, string connectionString)
@@ -353,40 +360,25 @@ namespace Backend_EF.ViewModels
             if (reader.Read())
             {
                 if (reader.GetInt32(0) == 1)
+                {
+                    reader.Close();
                     return true;
+                }
                 else
+                {
+                    reader.Close();
                     return false;
+                }
             }
             else
-                return false;
-        }//verified
-
-
-        //handle score data
-        public int GetScore(ScoreModel scoreModel, User user)
-        {
-            string queryString = $"SELECT Score FROM Scoredata WHERE Name LIKE '{scoreModel.Name}'";
-            if (Usersdata.Any(dbUser => dbUser.Name == user.Name))
             {
-                SqlConnection connection = new SqlConnection(QUERYCONNECTION);
-                SqlCommand command = new SqlCommand(queryString, connection);
-                connection.Open();
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    int score = reader.GetInt32(0);
-                    connection.Close();
-                    return score;
-                }
-                else
-                {
-                    connection.Close();
-                    return -1;
-                }
+                reader.Close();
+                return false;
             }
-            else
-                return -1;
         }//verified
+
+
+        //handle notes
+        
     }
 }

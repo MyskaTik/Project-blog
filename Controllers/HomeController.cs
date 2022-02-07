@@ -20,12 +20,7 @@ namespace Backend_EF.Controllers
             user.Name = HttpContext.Session.GetString("userName");
             user.Email = HttpContext.Session.GetString("userEmail");
             user.Password = HttpContext.Session.GetString("userPassword");
-            user.IdCode = db.GetIdCode(user.Name, user.Email, user.Password);
-            user.ScoreModel = new ScoreModel()
-            {
-                Name = user.Name
-            };
-            user.ScoreModel.Score = db.GetScore(user.ScoreModel, user);
+            user.IdCode = db.GetIdCode(user);
             return View(user);
         }
 

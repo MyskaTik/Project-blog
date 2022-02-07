@@ -1,0 +1,1 @@
+project was added class NoteHandler which output all user`s notes. did code-review in class ApplicationContext: added in methods reader.Close() where it need. removed ScoreModel and all methods and fields related with it. method HomePage in HomeController was changed: removed fileds of ScoreModel
