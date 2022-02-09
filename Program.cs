@@ -18,7 +18,7 @@ app.UseHttpsRedirection()
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Game}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

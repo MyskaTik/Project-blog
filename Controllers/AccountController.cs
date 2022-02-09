@@ -29,6 +29,8 @@ namespace Backend_EF.Controllers
             {
                 if (db.LoginUser(receivedUser) == "admin")
                     return RedirectToAction("EnterAs");
+                else if (db.LoginUser(receivedUser) == "moderator")
+                    return RedirectToAction("EnterAs");
                 else if (db.LoginUser(receivedUser) == "user")
                     return RedirectToAction("HomePage", "Home");
                 else
@@ -58,7 +60,7 @@ namespace Backend_EF.Controllers
                 Email = HttpContext.Session.GetString("userEmail"),
                 Password = HttpContext.Session.GetString("userPassword")
             };
-            changeableUser.IdCode = db.GetIdCode(changeableUser.Name, changeableUser.Email, changeableUser.Password);
+            changeableUser.IdCode = db.GetIdCode(changeableUser);
             db.UpdateUserData(changeableUser, receivedUser);    
             return RedirectToAction("Login");
         }

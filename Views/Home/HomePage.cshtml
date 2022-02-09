@@ -1,4 +1,4 @@
-﻿@model Backend_EF.ViewModels.MessageModel
+﻿@model Backend_EF.ViewModels.User
 @{
     Layout = null;
 }
@@ -112,15 +112,9 @@
     </section>
     <section class="u-clearfix u-section-1" id="sec-cf2b" style="background: rgb(238,238,238);">
         <div class="u-clearfix u-sheet u-sheet-1">
-            <h2 class="u-text u-text-default u-text-1" style="font-size: 36px;">Winner is @Model?.Name!</h2>
-            <h3 class="u-text u-text-2">
-                Our congrats, you became the best mathematician of all who stay here! We hope, that you will stay solve math tasks and reach new heights!<br>Sincerely, administration.
-            </h3>
-            <h3 class="u-text u-text-3">
-                Winner`s statistic<br>Name: not found<br>Score: not found
-            </h3>
+            <h2 class="u-text u-text-default u-text-1" style="font-size: 36px;">Here you can write down your tasks or thoughts.</h2>
         </div>
-        <a asp-controller="Game" asp-action="Index" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">PLAY</a>
+        <a asp-controller="Notes" asp-action="Index" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius-50 u-btn-1">NEXT</a>
     </section>
     <section class="skrollable u-align-left u-clearfix u-grey-5 u-section-2" id="carousel_c916">
         <div class="u-clearfix u-sheet u-sheet-1">
@@ -134,8 +128,8 @@
                         </span>
                     </p>
                     <div class="message">
-                        <a asp-controller="Home" asp-action="SendMessage" class="u-border-none u-btn u-button-style u-custom-color-6 u-hover-custom-color-4 u-btn-1">Write To Us</a>
-                        <a asp-controller="Home" asp-action="GetMessage" class="u-border-none u-btn u-button-style u-custom-color-6 u-hover-custom-color-4 u-btn-1">Get Answer</a>
+                        <a asp-controller="Home" asp-action="WriteMessage" class="u-border-none u-btn u-button-style u-custom-color-6 u-hover-custom-color-4 u-btn-1">Write To Us</a>
+                        <a asp-controller="Home" asp-action="GetAnswer" class="u-border-none u-btn u-button-style u-custom-color-6 u-hover-custom-color-4 u-btn-1">Get Answer</a>
                     </div>
                 </div>
             </div>
@@ -157,15 +151,15 @@
                                                 <input type="hidden" id="pageId" name="pageId" value="1766819294">
                                                 <div class="u-form-group u-form-message">
                                                     <label for="username-708d" class="u-form-control-hidden u-label"></label>
-                                                    <input type="text" placeholder="Enter your Username" id="username-708d" asp-for="Name" value="@Model?.Name" class="u-grey-5 u-input u-input-rectangle" required="">
+                                                    <input type="text" placeholder="Enter your Username" id="username-708d" asp-for="MessageModel.Name" value="@Model?.Name" class="u-grey-5 u-input u-input-rectangle" required="">
                                                 </div>
                                                 <div class="u-form-group u-form-message">
                                                     <label for="username-708d" class="u-form-control-hidden u-label"></label>
-                                                    <input type="email" placeholder="Enter your Email" id="username-708d" asp-for="Email" value="@Model?.Email" class="u-grey-5 u-input u-input-rectangle" required="">
+                                                    <input type="email" placeholder="Enter your Email" id="username-708d" asp-for="MessageModel.Email" value="@Model?.Email" class="u-grey-5 u-input u-input-rectangle" required="">
                                                 </div>
                                                 <div class="u-form-group u-form-message">
                                                     <label for="message-d1e0" class="u-form-control-hidden u-label"></label>
-                                                    <textarea type="text" placeholder="Enter your message" rows="4" cols="50" id="message-d1e0" asp-for="Message" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required=""></textarea>
+                                                    <textarea type="text" placeholder="Enter your message" rows="4" cols="50" id="message-d1e0" asp-for="MessageModel.Message" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required=""></textarea>
                                                 </div>
                                                 <div class="u-align-center u-form-group u-form-submit">
                                                     <a class="u-btn u-btn-submit u-button-style">Send</a>

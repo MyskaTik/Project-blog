@@ -15,7 +15,8 @@ namespace Backend_EF.ViewModels
         private const string ADMINNAME = "Admin";
         private const string ALPHABET = "abdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         public DbSet<User> Usersdata { get; set; }
-        public DbSet<ScoreModel> Scoredata { get; set; }
+        public DbSet<MessageModel> Messagedata { get; set; }
+        public DbSet<NoteModel> Notes { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
             Database.EnsureCreated();
@@ -33,13 +34,7 @@ namespace Backend_EF.ViewModels
             if (IsExist(receivedUser))//if user isn`t exist
                 return false;
             receivedUser.IdCode = GenerateIdCode(ALPHABET, 20);
-            ScoreModel scoreUser = new()
-            {
-                Name = receivedUser.Name,
-                Score = 0
-            };
-            Usersdata.Add(receivedUser);
-            Scoredata.Add(scoreUser);
+            Usersdata?.Add(receivedUser);
             SaveChanges();
             return true;
         }//verified
@@ -94,6 +89,7 @@ namespace Backend_EF.ViewModels
         public string GetPassword(string IdCode)
         {
             //returns password by specified user`s IdCode
+            string result = string.Empty;
             string queryString = $"SELECT Password FROM Usersdata WHERE IdCode LIKE '{IdCode}'";
             SqlConnection connection = new(QUERYCONNECTION);
             SqlCommand command = new(queryString, connection);
@@ -101,23 +97,32 @@ namespace Backend_EF.ViewModels
             command.ExecuteNonQuery();
             SqlDataReader reader = command.ExecuteReader();
             if (reader.Read())
-                return reader.GetString(0);
+            {
+                result = reader.GetString(0);
+                
+            }
             else
-                return "password not found";
+                result = "password not found";
+            reader.Close();
+            return result;
         }//verified
-        public string GetIdCode(string name, string email, string password)
+        public string GetIdCode(User user)
         {
             //returns IdCode of specified user using model MessageModel, because that model is used in view
-            string queryString = $"SELECT IdCode FROM Usersdata WHERE Name LIKE '{name}' AND Email LIKE '{email}' AND Password LIKE '{password}'";
+            string result = string.Empty;
+            string queryString = $"SELECT IdCode FROM Usersdata WHERE Name LIKE '{user.Name}' AND Email LIKE '{user.Email}' AND Password LIKE '{user.Password}'";
             SqlConnection connection = new(QUERYCONNECTION);
             SqlCommand command = new(queryString, connection);
             connection.Open();
             command.ExecuteNonQuery();
             SqlDataReader reader = command.ExecuteReader();
             if (reader.Read())
-                return reader.GetString(0);
+                result = reader.GetString(0);
             else
-                return "IdCode not found";
+                result = "IdCode not found";
+
+            reader.Close();
+            return result;
         }//verified
         private void SetRole(string connectionString)
         {
@@ -144,6 +149,7 @@ namespace Backend_EF.ViewModels
                 result += reader.GetString(1);
             }
             connection.Close();
+            reader.Close();
             return result;
         }//verified
         private string GenerateIdCode(string Alphabet, int Length)
@@ -166,32 +172,13 @@ namespace Backend_EF.ViewModels
         public string SendMessage([Bind] User user, MessageModel messageModel)
         {
             //sending message from user name
-            string queryString = $"INSERT INTO Messagedata(Name, Email, Message, ToEmail) VALUES('{messageModel.Name}','{messageModel.Email}','{messageModel.Message}', '{ADMINEMAIL}')";
-            SqlConnection connection = new(QUERYCONNECTION);
-            SqlCommand command = new(queryString, connection);
-            try
-            {
-                if (!IsExist(user))
-                    return "Name or email is wrong";
-                if (ManyMessagesToOne(user, QUERYCONNECTION))
-                    return "You have already sent message. Please wait while admin will read your message and answer you. Sincerely, administration";
-
-                connection.Open();
-                command.ExecuteNonQuery();
-                connection.Close();
-                return "Message was sent succesfully";
-            }
-            catch (Exception ex)
-            {
-                if (connection.State == ConnectionState.Open)
-                    connection.Close();
-                return ex.Message.ToString();
-            }
-            finally
-            {
-                connection.Close();
-            }
-
+            if (!IsExistWithoutPassword(user))
+                return "Name or email is wrong";
+            if (ManyMessagesToOne(messageModel, QUERYCONNECTION))
+                return "You have already sent message. Please wait while admin will read your message and answer you. Sincerely, administration";
+            Messagedata.Add(messageModel);
+            SaveChanges();
+            return "Message was sent succesfully";
         }//verified
         public string SendMessageFromAdmin([Bind] User user, MessageModel messageModel)
         {
@@ -201,9 +188,9 @@ namespace Backend_EF.ViewModels
             SqlCommand command = new(queryString, connection);
             try
             {
-                if (!IsExist(user))
+                if (!IsExistWithoutPassword(user))
                     return "Name or email is wrong";
-                if (ManyMessagesToOne(user, QUERYCONNECTION))
+                if (ManyMessagesToOne(messageModel, QUERYCONNECTION))
                     return "you sent more than 1 message to user, please delete your message when 3 days are went";
 
                 connection.Open();
@@ -222,31 +209,29 @@ namespace Backend_EF.ViewModels
                 connection.Close();
             }
 
-        }//verified
+        }//verified admin api
         public string GetMessageFromAdmin([Bind] User user, MessageModel messageModel)
         {
             //gets message only if it from administration. this method using for getting message to user
-            string queryString = $"SELECT Name, Email, Message, CASE  WHEN Name LIKE 'Admin' AND Email LIKE 'maximkirichenk0.06@gmail.com' AND ToEmail LIKE '{messageModel.Email}' THEN 'TRUE' ELSE 'FALSE' END AS result FROM Messagedata ORDER BY result DESC";
-            string result = $"";
+            string queryString = $"SELECT Name, Email, Message FROM Messagedata WHERE Name LIKE 'Admin' AND Email LIKE 'maximkirichenk0.06@gmail.com' AND ToEmail LIKE '{messageModel.Email}'";
             SqlConnection connection = new(QUERYCONNECTION);
             SqlCommand command = new(queryString, connection);
             connection.Open();
             try
             {
-                if (!IsExist(user))
+                if (!IsExistWithoutPassword(user))
                     return "name or email is wrong";
                 command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.Read())
                 {
-                    if (reader.GetString(3) == "TRUE")
-                        result += reader.GetString(2);
+                    if (reader.GetString(2) is not null)
+                        return reader.GetString(2);
                     else
                         return "you haven`t any message from administration yet";
                 }
                 else
-                    result = "there aren't any message ";
-                return result;
+                    return "there aren't any message";
             }
             catch (System.Exception ex)
             {
@@ -264,7 +249,7 @@ namespace Backend_EF.ViewModels
         public string GetMessage([Bind] MessageModel messageModel)
         {
             //gets any message
-            string queryString = $"SELECT Name, Email, Message, CASE  WHEN Name LIKE '{messageModel.Name}' AND Email LIKE '{messageModel.Email}' THEN 'TRUE' ELSE 'FALSE' END AS result FROM Messagedata ORDER BY result DESC";
+            string queryString = $"SELECT Name, Email, Message FROM Messagedata WHERE Name LIKE 'Admin' AND Email LIKE 'maximkirichenk0.06@gmail.com'";
             string result = $"Name: {messageModel.Name}\nEmail: {messageModel.Email}\nMessage: ";
             SqlConnection connection = new(QUERYCONNECTION);
             SqlCommand command = new(queryString, connection);
@@ -275,16 +260,16 @@ namespace Backend_EF.ViewModels
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.Read())
                 {
-                    if (reader.GetString(3) == "TRUE")
-                        result += reader.GetString(2);
+                    if (reader.GetString(2) is not null)
+                        result = result + reader.GetString(2);
                     else
                         return "this user didn`t send any message";
                 }
                 else
-                    result = "there aren't any message ";
+                    return "there aren't any message ";
                 return result;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 if (connection.State == ConnectionState.Open)
                 {
@@ -296,7 +281,7 @@ namespace Backend_EF.ViewModels
             {
                 connection.Close();
             }
-        }//verified
+        }//verified admin api
         public string GetUser([Bind] User user)
         {
             //gets all info about specific user
@@ -307,7 +292,7 @@ namespace Backend_EF.ViewModels
                 "Password",
                 "RoleName"
             };
-            string result = "";
+            string result = string.Empty;
             string queryString = $"SELECT Name, Email, Password, RoleName FROM Usersdata WHERE Name LIKE '{user.Name}'";
             SqlConnection connection = new(QUERYCONNECTION);
             SqlCommand command = new(queryString, connection);
@@ -323,9 +308,12 @@ namespace Backend_EF.ViewModels
                 return result;
             }
             else
-                return "user isn`t exist";
+                result = "user isn`t exist";
 
-        }//verified
+            reader.Close();
+            return result;
+
+        }//verified admin api
         public string DeleteMessage([Bind] User user, string connectionString)
         {
             //delete message from somebody in the db if it necessary
@@ -344,7 +332,7 @@ namespace Backend_EF.ViewModels
             }
             else
                 return false.ToString();
-        }//verified
+        }//verified admin api
         public async void SendMail([Bind] MessageModel messageModel)
         {
             string password = GetPassword(messageModel.Name);
@@ -360,10 +348,10 @@ namespace Backend_EF.ViewModels
             }; //создаем экземпляр клиента 
             await client.SendMailAsync(userMessage);//отправляем сообщение
         }//verified
-        private bool ManyMessagesToOne([Bind] User user, string connectionString)
+        private bool ManyMessagesToOne([Bind] MessageModel messageModel, string connectionString)
         {
             //if there are a lot of messages to one user, method returns true
-            string querySelect = $"SELECT COUNT(ToEmail) FROM Messagedata WHERE ToEmail LIKE '{user.Email}'";
+            string querySelect = $"SELECT COUNT(ToEmail) FROM Messagedata WHERE ToEmail LIKE '{messageModel.ToEmail}' AND Email LIKE '{messageModel.Email}'";
             SqlConnection connection = new(connectionString);
             SqlCommand command = new(querySelect, connection);
             connection.Open();
@@ -372,47 +360,25 @@ namespace Backend_EF.ViewModels
             if (reader.Read())
             {
                 if (reader.GetInt32(0) == 1)
+                {
+                    reader.Close();
                     return true;
+                }
                 else
+                {
+                    reader.Close();
                     return false;
+                }
             }
             else
-                return false;
-        }//verified
-
-
-        //handle score data
-        public int GetScore(ScoreModel scoreModel, User user)
-        {
-            string queryString = $"SELECT Score FROM Scoredata WHERE Name LIKE '{scoreModel.Name}'";
-            if (Usersdata.Any(dbUser => dbUser.Name == user.Name))
             {
-                SqlConnection connection = new SqlConnection(QUERYCONNECTION);
-                SqlCommand command = new SqlCommand(queryString, connection);
-                connection.Open();
-                command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    int score = reader.GetInt32(0);
-                    connection.Close();
-                    return score;
-                }
-                else
-                {
-                    connection.Close();
-                    return -1;
-                }
-            }
-            else
-                return -1;
-        }//verified
-        public bool GetTrueAnswer(int answer)
-        {
-            if (answer == 0)
-                return true;
-            else
+                reader.Close();
                 return false;
-        }
+            }
+        }//verified
+
+
+        //handle notes
+        
     }
 }
