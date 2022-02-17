@@ -5,7 +5,7 @@ namespace Backend_EF.Controllers
 {
     public class AccountController : Controller
     {
-        public ApplicationContext db { get; set; }
+        public ApplicationContext db;
         public AccountController(ApplicationContext db)
         {
             this.db = db;
@@ -61,7 +61,7 @@ namespace Backend_EF.Controllers
                 Password = HttpContext.Session.GetString("userPassword")
             };
             changeableUser.IdCode = db.GetIdCode(changeableUser);
-            db.UpdateUserData(changeableUser, receivedUser);    
+            db.EditUserData(changeableUser, receivedUser);    
             return RedirectToAction("Login");
         }
 

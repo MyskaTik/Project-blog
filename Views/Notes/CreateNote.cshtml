@@ -1,7 +1,10 @@
-﻿@model Backend_EF.ViewModels.User
+﻿
 @{
     Layout = null;
-    Guid IdNote = new Guid();
+}
+@model Backend_EF.ViewModels.User
+@{
+    Layout = null;
 }
 @using Backend_EF.HtmlHelpers;
 @using Backend_EF.ViewModels;
@@ -16,7 +19,8 @@
     <meta name="page_type" content="np-template-header-footer-from-plugin">
     <title>Note</title>
     <link rel="stylesheet" href="~/nicepage.css" media="screen">
-    <link rel="stylesheet" href="~/NoteIndex.css" media="screen">
+    <link rel="stylesheet" href="~/CreateNote.css" media="screen">
+    <link rel="stylesheet" href="~/CreateNoteForm.css" media="screen">
     <script class="u-script" type="text/javascript" src="~/jquery.js" defer=""></script>
     <script class="u-script" type="text/javascript" src="~/nicepage.js" defer=""></script>
     <meta name="generator" content="Nicepage 4.0.3, nicepage.com">
@@ -81,41 +85,28 @@
         </div>
     </header>
 
-    <section class="u-clearfix u-section-1" id="sec-c690">
-        <a asp-controller="Notes" asp-action="CreateNote" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-3 u-radius-50 u-white u-btn-2">Create</a>
+    <section class="u-align-center u-clearfix u-grey-10 u-section-1" id="sec-d99d">
         <div class="u-clearfix u-sheet u-sheet-1">
-            <div class="u-list u-list-1">
-                <div class="u-repeater u-repeater-1">
-                    @{
-                        for (int i = 0; i < NoteHandler.GetRowsCount(Model); i++)
-                        {
-                            <div class="u-container-style u-list-item u-repeater-item" style="width: 100px; height: 400px;">
-                                <div class="u-container-layout u-similar-container u-valign-top u-container-layout-3">
-                                    <div class="u-container-style u-custom-item u-group u-palette-1-base u-preserve-proportions u-radius-15 u-shape-round u-group-2">
-                                        <div class="u-container-layout u-valign-top u-container-layout-4">
-                                            <p class="u-text u-text-default u-text-3">@NoteHandler.GetNoteTitleById(Model, i)</p>
-                                            <p class="u-text u-text-default u-text-4">
-                                                @foreach (var note in NoteHandler.GetNoteBody(Model, i))
-                                                {
-                                                    <p class="u-text u-text-default u-text-4">@note</p>
-                                                    //assigns value for variable  
-                                                    IdNote = NoteHandler.GetNoteId(note);
-                                                }
-                                            </p>
-                                            <form asp-controller="Notes" asp-action="DeleteNote" method="post">
-                                                <input name="id" type="submit" value="DELETE" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-3 u-radius-50 u-white u-btn-1">
-                                                <input type="hidden" name="IdNote" value="@IdNote">
-                                            </form>
-                                            <form asp-controller="Notes" asp-action="EditNote" method="get">
-                                                <input name="id" type="submit" value="EDIT" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-3 u-radius-50 u-white u-btn-2">
-                                                <input type="hidden" name="IdNote" value="@IdNote">
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+            <div class="u-container-style u-group u-radius-50 u-shape-round u-white u-group-1">
+                <div class="u-container-layout u-container-layout-1">
+                    <h3 class="u-align-center u-text u-text-default u-text-1">Sign In</h3>
+                    <div class="u-expanded-width u-form u-login-control u-form-1">
+                        <form asp-controller="Notes" asp-action="CreateNote" method="post" class="u-clearfix u-form-custom-backend u-form-spacing-35 u-form-vertical u-inner-form" source="custom" name="login" style="padding: 10px;">
+
+                            <div class="u-form-group u-form-name">
+                                <label for="username-708d" class="u-form-control-hidden u-label"></label>
+                                <input type="text" placeholder="Enter Title" id="username-708d" asp-for="NoteModel.Title" value="buy milk" class="u-grey-5 u-input u-input-rectangle">
                             </div>
-                        }
-                    }
+                            <div class="u-form-group u-form-password">
+                                <label for="password-708d" class="u-form-control-hidden u-label"></label>
+                                <textarea placeholder="Enter your note here" id="password-708d" asp-for="NoteModel.Body" value="milk should be tasty" class="u-grey-5 u-input u-input-rectangle" style="height: 200px;"></textarea>
+                            </div>
+                            <div class="u-align-center u-form-group u-form-submit">
+                                <a href="#" class="u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-1 u-radius-17 u-btn-1">Create</a>
+                                <input type="submit" value="submit" class="u-form-control-hidden">
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

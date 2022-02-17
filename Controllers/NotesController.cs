@@ -1,4 +1,5 @@
-﻿using Backend_EF.ViewModels;
+﻿using Backend_EF.HtmlHelpers;
+using Backend_EF.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend_EF.Controllers
@@ -10,6 +11,7 @@ namespace Backend_EF.Controllers
         {
             this.db = db;
         }
+
         public IActionResult Index(User user)
         {
             //sets user by session
@@ -17,29 +19,71 @@ namespace Backend_EF.Controllers
             user.Email = HttpContext.Session.GetString("userEmail");
             user.Password = HttpContext.Session.GetString("userPassword");
             user.IdCode = db.GetIdCode(user);
-            //creates new object of ScoreModel to pass it in method GetScore
             return View(user);
         }
-        
+
+        public IActionResult CreateNote(User user)
+        {
+            user.Name = HttpContext.Session.GetString("userName");
+            user.Email = HttpContext.Session.GetString("userEmail");
+            user.Password = HttpContext.Session.GetString("userPassword");
+            user.IdCode = db.GetIdCode(user);
+            return View(user);
+        }
+
+        [HttpGet]
+        public IActionResult EditNote(User user, Guid IdNote)
+        {
+            user.Name = HttpContext.Session.GetString("userName");
+            user.Email = HttpContext.Session.GetString("userEmail");
+            user.Password = HttpContext.Session.GetString("userPassword");
+            user.IdCode = db.GetIdCode(user);
+            user.NoteModel = new NoteModel()
+            {
+                Title = NoteHandler.GetNoteTitleByIdNote(IdNote),
+                Body = NoteHandler.GetNoteBodyByIdNote(IdNote)
+            };
+            return View(user);
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> EditNote(User user, Guid IdNote, string[] args)
         {
-            db.Notes.Add(user.NoteModel);
-            db.SaveChanges();
+            user.Name = HttpContext.Session.GetString("userName");
+            user.Email = HttpContext.Session.GetString("userEmail");
+            user.Password = HttpContext.Session.GetString("userPassword");
+            user.IdCode = db.GetIdCode(user);
+            db.EditNote(user.NoteModel, IdNote, user);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(User user)
+        public async Task<IActionResult> DeleteNote(Guid IdNote)
         {
-            return Content("Hello yopta");
+            NoteModel deleteNoteModel = new NoteModel()
+            {
+                IdNote = IdNote
+            };
+            User user = new User()
+            {
+                Name = HttpContext.Session.GetString("userName"),
+                Email = HttpContext.Session.GetString("userEmail"),
+                Password = HttpContext.Session.GetString("userPassword")
+            };
+            user.IdCode = db.GetIdCode(user);
+            await db.DeleteNoteAsync(deleteNoteModel);
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(User user)
+        public async Task<IActionResult> CreateNote(User user, string[] args)
         {
-            return View(user);
+            user.Name = HttpContext.Session.GetString("userName");
+            user.Email = HttpContext.Session.GetString("userEmail");
+            user.Password = HttpContext.Session.GetString("userPassword");
+            user.IdCode = db.GetIdCode(user);
+            db.CreateNote(user.NoteModel, user);
+            return RedirectToAction("Index");
         }
     }
 }

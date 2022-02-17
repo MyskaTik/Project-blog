@@ -45,7 +45,7 @@ namespace Backend_EF.ViewModels
             else
                 return false.ToString();
         }//verified
-        public void UpdateUserData(User changeableUser, User inputUser)
+        public void EditUserData(User changeableUser, User inputUser)
         {
             //updates user`s data
             string queryString = $"DELETE FROM Usersdata WHERE Name LIKE '{changeableUser.Name}' AND Email LIKE '{changeableUser.Email}' AND Password LIKE '{changeableUser.Password}' INSERT INTO Usersdata VALUES (3,'user','{inputUser.Name}','{inputUser.Email}','{inputUser.Password}', '{changeableUser.IdCode}')";
@@ -209,7 +209,7 @@ namespace Backend_EF.ViewModels
                 connection.Close();
             }
 
-        }//verified admin api
+        }//verified, admin api
         public string GetMessageFromAdmin([Bind] User user, MessageModel messageModel)
         {
             //gets message only if it from administration. this method using for getting message to user
@@ -281,7 +281,7 @@ namespace Backend_EF.ViewModels
             {
                 connection.Close();
             }
-        }//verified admin api
+        }//verified, admin api
         public string GetUser([Bind] User user)
         {
             //gets all info about specific user
@@ -313,7 +313,7 @@ namespace Backend_EF.ViewModels
             reader.Close();
             return result;
 
-        }//verified admin api
+        }//verified, admin api
         public string DeleteMessage([Bind] User user, string connectionString)
         {
             //delete message from somebody in the db if it necessary
@@ -332,7 +332,7 @@ namespace Backend_EF.ViewModels
             }
             else
                 return false.ToString();
-        }//verified admin api
+        }//verified, admin api
         public async void SendMail([Bind] MessageModel messageModel)
         {
             string password = GetPassword(messageModel.Name);
@@ -379,6 +379,61 @@ namespace Backend_EF.ViewModels
 
 
         //handle notes
-        
+        public void CreateNote(NoteModel insertNoteModel, User user)
+        {
+            string queryString = $"INSERT INTO Notes (IdNote, IdCode, Title, Body)VALUES (NEWID(), '{user.IdCode}', '{insertNoteModel.Title}', '{insertNoteModel.Body}')";
+            SqlConnection connection = new SqlConnection(QUERYCONNECTION);
+            SqlCommand command = new SqlCommand(queryString, connection);
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
+        }//verified
+        public async Task CreateNoteAsync(NoteModel insertNoteModel, User user)
+        { 
+            string queryString = $"INSERT INTO Notes (IdNote, IdCode, Title, Body)VALUES (NEWID(), '{user.IdCode}', '{insertNoteModel.Title}', '{insertNoteModel.Body}')";
+            SqlConnection connection = new SqlConnection(QUERYCONNECTION);
+            SqlCommand command = new SqlCommand(queryString, connection);
+            connection.Open();
+            await command.ExecuteNonQueryAsync();
+            connection.Close();
+            Task.CompletedTask.Wait();
+        }//verified
+        public void EditNote(NoteModel insertNoteModel, Guid deleteNoteId, User user)
+        {
+            string queryString = $"DELETE FROM Notes WHERE IdNote LIKE '{deleteNoteId}' INSERT INTO Notes(IdNote, IdCode, Title, Body) VALUES (NEWID(), '{user.IdCode}', '{insertNoteModel.Title}', '{insertNoteModel.Body}')";
+            SqlConnection connection = new SqlConnection(QUERYCONNECTION);
+            SqlCommand command = new SqlCommand(queryString, connection);
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+        public async Task EditNoteAsync(NoteModel insertNoteModel, NoteModel deleteNoteModel, User user)
+        {
+            string queryString = $"DELETE FROM Notes WHERE IdNote LIKE '{deleteNoteModel.IdNote}' INSERT INTO Notes(IdNote, IdCode, Title, Body) VALUES ('{new Guid()}', '{user.IdCode}', '{insertNoteModel.Title}', '{insertNoteModel.Body}')";
+            SqlConnection connection = new SqlConnection(QUERYCONNECTION);
+            SqlCommand command = new SqlCommand(queryString, connection);
+            connection.Open();
+            await command.ExecuteNonQueryAsync();
+            connection.Close();
+        }
+        public void DeleteNote(NoteModel deleteNoteModel)
+        {
+            string queryString = $"DELETE FROM Notes WHERE IdNote LIKE '{deleteNoteModel.IdNote}'";
+            SqlConnection connection = new SqlConnection(QUERYCONNECTION);
+            SqlCommand command = new SqlCommand(queryString, connection);
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
+        }//verified
+        public async Task DeleteNoteAsync(NoteModel deleteNoteModel)
+        {
+            string queryString = $"DELETE FROM Notes WHERE IdNote LIKE '{deleteNoteModel.IdNote}'";
+            SqlConnection connection = new SqlConnection(QUERYCONNECTION);
+            SqlCommand command = new SqlCommand(queryString, connection);
+            connection.Open();
+            await command.ExecuteNonQueryAsync();
+            connection.Close();
+            Task.CompletedTask.Wait();
+        }//verified
     }
 }
